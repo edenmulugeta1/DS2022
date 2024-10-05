@@ -1,4 +1,4 @@
-Lab 4: S3 Storage
+Lab 4: S3 Storage 
 
 S3 Security and HTTP Access by URL (AWS Access and key are deleted for security puposes)
 
@@ -149,4 +149,53 @@ delete: s3://ds2022-unb6ny/google_logo.png
 C:\Users\Owner>aws s3 rb s3://ds2022-unb6ny
 remove_bucket: ds2022-unb6ny
 
+PS C:\Users\Owner> python
+Python 3.12.7 (tags/v3.12.7:0b05ead, Oct  1 2024, 03:06:41) [MSC v.1941 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import boto3
+>>> s3 = boto3.client('s3', region_name='us-east-1')
+>>> dir(s3)
+['_PY_TO_OP_NAME', '__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattr__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_cache', '_client_config', '_convert_to_request_dict', '_emit_api_params', '_endpoint', '_exceptions', '_exceptions_factory', '_get_credentials', '_get_waiter_config', '_load_exceptions', '_loader', '_make_api_call', '_make_request', '_register_handlers', '_request_signer', '_resolve_endpoint_ruleset', '_response_parser', '_ruleset_resolver', '_serializer', '_service_model', '_user_agent_creator', 'abort_multipart_upload', 'can_paginate', 'close', 'complete_multipart_upload', 'copy', 'copy_object', 'create_bucket', 'create_multipart_upload', 'create_session', 'delete_bucket', 'delete_bucket_analytics_configuration', 'delete_bucket_cors', 'delete_bucket_encryption', 'delete_bucket_intelligent_tiering_configuration', 'delete_bucket_inventory_configuration', 'delete_bucket_lifecycle', 'delete_bucket_metrics_configuration', 'delete_bucket_ownership_controls', 'delete_bucket_policy', 'delete_bucket_replication', 'delete_bucket_tagging', 'delete_bucket_website', 'delete_object', 'delete_object_tagging', 'delete_objects', 'delete_public_access_block', 'download_file', 'download_fileobj', 'exceptions', 'generate_presigned_post', 'generate_presigned_url', 'get_bucket_accelerate_configuration', 'get_bucket_acl', 'get_bucket_analytics_configuration', 'get_bucket_cors', 'get_bucket_encryption', 'get_bucket_intelligent_tiering_configuration', 'get_bucket_inventory_configuration', 'get_bucket_lifecycle', 'get_bucket_lifecycle_configuration', 'get_bucket_location', 'get_bucket_logging', 'get_bucket_metrics_configuration', 'get_bucket_notification', 'get_bucket_notification_configuration', 'get_bucket_ownership_controls', 'get_bucket_policy', 'get_bucket_policy_status', 'get_bucket_replication', 'get_bucket_request_payment', 'get_bucket_tagging', 'get_bucket_versioning', 'get_bucket_website', 'get_object', 'get_object_acl', 'get_object_attributes', 'get_object_legal_hold', 'get_object_lock_configuration', 'get_object_retention', 'get_object_tagging', 'get_object_torrent', 'get_paginator', 'get_public_access_block', 'get_waiter', 'head_bucket', 'head_object', 'list_bucket_analytics_configurations', 'list_bucket_intelligent_tiering_configurations', 'list_bucket_inventory_configurations', 'list_bucket_metrics_configurations', 'list_buckets', 'list_directory_buckets', 'list_multipart_uploads', 'list_object_versions', 'list_objects', 'list_objects_v2', 'list_parts', 'meta', 'put_bucket_accelerate_configuration', 'put_bucket_acl', 'put_bucket_analytics_configuration', 'put_bucket_cors', 'put_bucket_encryption', 'put_bucket_intelligent_tiering_configuration', 'put_bucket_inventory_configuration', 'put_bucket_lifecycle', 'put_bucket_lifecycle_configuration', 'put_bucket_logging', 'put_bucket_metrics_configuration', 'put_bucket_notification', 'put_bucket_notification_configuration', 'put_bucket_ownership_controls', 'put_bucket_policy', 'put_bucket_replication', 'put_bucket_request_payment', 'put_bucket_tagging', 'put_bucket_versioning', 'put_bucket_website', 'put_object', 'put_object_acl', 'put_object_legal_hold', 'put_object_lock_configuration', 'put_object_retention', 'put_object_tagging', 'put_public_access_block', 'restore_object', 'select_object_content', 'upload_file', 'upload_fileobj', 'upload_part', 'upload_part_copy', 'waiter_names', 'write_get_object_response']
+>>> s3 = boto3.client('s3', region_name="us-east-1")
+>>> response = s3.list_buckets()
+>>> for r in response['Buckets']:
+...     print(r['Name'])
+...
+ds2022-unb6ny
+>>> bucket = 'ds2022-unb6ny'
+>>> local_file = r'C:\Users\Owner\OneDrive\Pictures\Saved Pictures\Fishes.jpg'
+>>> resp = s3.put_object(
+...     Body = local_file,
+...     Bucket = bucket,
+...     Key = local_file
+... )
+>>> resp = s3.put_object(
+...     Body=open(local_file, 'rb'),
+...     Bucket=bucket,
+...     Key=local_file.split('\\')[-1]
+... )
+>>> resp = s3.put_object(
+...     Body = local_file,
+...     Bucket = bucket,
+...     Key = local_file
+...     ACL = 'public-read',
+  File "<stdin>", line 4
+    Key = local_file
+          ^^^^^^^^^
+SyntaxError: invalid syntax. Perhaps you forgot a comma?
+>>> resp = s3.put_object(
+...     Body = local_file,
+...     Bucket=bucket,
+...     Key = local_file,
+...     ACL = 'public-read',
+... )
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "C:\Users\Owner\AppData\Local\Programs\Python\Python312\Lib\site-packages\botocore\client.py", line 569, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Owner\AppData\Local\Programs\Python\Python312\Lib\site-packages\botocore\client.py", line 1023, in _make_api_call
+    raise error_class(parsed_response, operation_name)
+botocore.exceptions.ClientError: An error occurred (AccessControlListNotSupported) when calling the PutObject operation: The bucket does not allow ACLs
+>>>
 
