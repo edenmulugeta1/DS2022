@@ -1,1 +1,152 @@
+Lab 4: S3 Storage
+
+S3 Security and HTTP Access by URL
+
+Microsoft Windows [Version 10.0.22631.4249]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\Owner>aws
+
+usage: aws [options] <command> <subcommand> [<subcommand> ...] [parameters]
+To see help text, you can run:
+
+  aws help
+  aws <command> help
+  aws <command> <subcommand> help
+
+aws: error: the following arguments are required: command
+
+
+C:\Users\Owner>aws configure
+AWS Access Key ID [****************LOY3]: 
+AWS Secret Access Key [****************IzmO]: 
+Default region name [us-east-1]: us-east-1
+Default output format [json]: json
+
+C:\Users\Owner>aws s3 ls
+
+C:\Users\Owner>aws s3 mb s3://ds2022-unb6ny
+make_bucket: ds2022-unb6ny
+
+C:\Users\Owner>curl https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png > google_logo.png
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 13504  100 13504    0     0  16044      0 --:--:-- --:--:-- --:--:-- 16191
+
+C:\Users\Owner>aws s3 cp google_logo.png s3://ds2022-unb6ny/
+upload: .\google_logo.png to s3://ds2022-unb6ny/google_logo.png
+
+C:\Users\Owner>aws s3 ls s3://ds2022-unb6ny/
+2024-10-04 16:47:48      13504 google_logo.png
+
+C:\Users\Owner>https://s3.amazonaws.com/ds2022-unb6ny/google_logo.png
+'https:' is not recognized as an internal or external command,
+operable program or batch file.
+C:\Users\Owner>aws s3 presign --expires-in 30 s3://ds2022-unb6ny/google.png
+https://ds2022-unb6ny.s3.us-east-1.amazonaws.com/google.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIATTSKFS6MZE6VLOY3%2F20241004%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241004T210422Z&X-Amz-Expires=30&X-Amz-SignedHeaders=host&X-Amz-Signature=83ddb2bf2d7f2b8f9cfc1be22c58b1234cb88e932f2c50aefc46795cf3ce6593
+
+C:\Users\Owner>aws s3 presign s3://ds2022-unb6ny/google_logo.png --expires-in 604800
+https://ds2022-unb6ny.s3.us-east-1.amazonaws.com/google_logo.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=%16%2F20241004%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20241004T231524Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=63a31d33a7027735cd782d20e51672c9981e73ae773d44f0e7a19e386d667748
+
+C:\Users\Owner>                                                                                            curl -o white-water-lily.jpg https://images.squarespace-cdn.com/content/v1/51990477e4b0f50f41c3d666/1540137491345-QM8QQNBGXJKW4JQM84F0/white-water-lily_THP.jpg
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  283k  100  283k    0     0  2227k      0 --:--:-- --:--:-- --:--:-- 2303k              
+C:\Users\Owner>aws s3 cp --acl public-read white_water_lily.jpg s3://ds2022-unb6ny/
+
+The user-provided path white_water_lily.jpg does not exist.
+
+C:\Users\Owner>aws s3 cp --acl public-read white-water-lily.jpg s3://ds2022-unb6ny/
+upload failed: .\white-water-lily.jpg to s3://ds2022-unb6ny/white-water-lily.jpg An error occurred (AuthorizationHeaderMalformed) when calling the PutObject operation: The authorization header is malformed; a non-empty Access Key (AKID) must be provided in the credential.
+
+C:\Users\Owner>dir
+ Volume in drive C is Windows
+ Volume Serial Number is E654-A4AF
+
+ Directory of C:\Users\Owner
+
+10/04/2024  07:39 PM    <DIR>          .
+05/29/2023  07:00 PM    <DIR>          ..
+10/19/2023  01:15 PM    <DIR>          .astropy
+10/03/2024  10:50 AM    <DIR>          .aws
+09/05/2024  10:23 AM    <DIR>          .azure
+10/04/2024  07:05 PM             1,613 .bash_history
+06/14/2024  12:08 AM    <DIR>          .cache
+01/25/2024  05:41 PM    <DIR>          .conda
+01/25/2024  01:39 PM                25 .condarc
+08/30/2023  09:12 AM    <DIR>          .continuum
+09/05/2024  10:23 AM    <DIR>          .docker
+06/14/2024  12:37 AM    <DIR>          .eclipse
+01/25/2024  01:41 PM    <DIR>          .ipynb_checkpoints
+08/30/2023  02:28 PM    <DIR>          .ipython
+08/31/2023  12:58 PM    <DIR>          .jupyter
+10/19/2023  01:14 PM    <DIR>          .matplotlib
+06/01/2023  12:01 PM    <DIR>          .ms-ad
+08/07/2024  07:36 PM    <DIR>          .p2
+01/22/2024  01:04 PM    <DIR>          Anaconda
+08/30/2023  09:11 AM    <DIR>          anaconda3
+05/29/2023  06:53 PM    <DIR>          Contacts
+05/30/2023  03:19 PM    <DIR>          Documents
+10/04/2024  03:54 PM    <DIR>          Downloads
+09/13/2024  06:20 PM    <DIR>          DS2022
+06/03/2024  05:31 PM    <DIR>          eclipse
+05/29/2023  06:53 PM    <DIR>          Favorites
+12/04/2023  10:48 PM             2,110 final
+10/04/2024  04:30 PM            13,504 google_logo.png
+11/08/2023  10:20 PM             3,190 health.py
+05/29/2023  06:53 PM    <DIR>          Links
+09/12/2024  09:59 AM    <DIR>          loveboat
+09/22/2024  09:59 PM               685 madlib.sh
+11/08/2023  07:36 PM                29 main.py
+05/29/2023  06:53 PM    <DIR>          Music
+09/22/2024  10:18 PM    <DIR>          my-work
+10/03/2024  11:26 PM    <DIR>          OneDrive
+01/25/2024  01:40 PM    <DIR>          PA 04
+10/19/2023  01:29 PM    <DIR>          PycharmProjects
+05/29/2023  06:53 PM    <DIR>          Saved Games
+06/07/2023  11:22 AM    <DIR>          Searches
+09/26/2023  07:41 PM    <DIR>          Untitled Folder 1
+09/26/2023  07:45 PM    <DIR>          Untitled Folder 2
+09/29/2023  02:31 PM               810 Untitled.ipynb
+09/29/2023  02:51 PM             1,182 Untitled1.ipynb
+01/25/2024  01:41 PM                72 Untitled2.ipynb
+05/30/2023  04:57 PM    <DIR>          Videos
+10/04/2024  07:39 PM           290,069 white-water-lily.jpg
+              11 File(s)        313,289 bytes
+              36 Dir(s)  295,739,179,008 bytes free
+
+C:\Users\Owner>aws configure
+AWS Access Key ID [****************]: 
+AWS Secret Access Key [****************]: 
+Default region name [us-east-1]: us-east-1
+Default output format [json]: json
+
+C:\Users\Owner>aws s3 cp --acl public-read white-water-lily.jpg s3://ds2022-unb6ny/
+upload: .\white-water-lily.jpg to s3://ds2022-unb6ny/white-water-lily.jpg
+
+C:\Users\Owner>aws s3 rm s3://ds2022-unb6ny/white-water-lily.jpg
+delete: s3://ds2022-unb6ny/white-water-lily.jpg
+
+C:\Users\Owner>aws s3 ls s3://ds2022-unb6ny/
+2024-10-04 16:47:48      13504 google_logo.png
+
+C:\Users\Owner>curl -o random.jpg https://hatrabbits.com/wp-content/uploads/2017/01/random.jpg
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  8853  100  8853    0     0  15117      0 --:--:-- --:--:-- --:--:-- 15290
+
+C:\Users\Owner>aws s3 cp --acl public-read random.jpg s3://ds2022-unb6ny/
+upload: .\random.jpg to s3://ds2022-unb6ny/random.jpg
+
+C:\Users\Owner>aws s3 ls s3://ds2022-unb6ny/
+2024-10-04 16:47:48      13504 google_logo.png
+2024-10-04 20:00:19       8853 random.jpg
+
+C:\Users\Owner>aws s3 rm s3://ds2022-unb6ny/ --recursive
+delete: s3://ds2022-unb6ny/random.jpg
+delete: s3://ds2022-unb6ny/google_logo.png
+
+C:\Users\Owner>aws s3 rb s3://ds2022-unb6ny
+remove_bucket: ds2022-unb6ny
+
 
